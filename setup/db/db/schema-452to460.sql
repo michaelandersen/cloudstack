@@ -399,3 +399,106 @@ CREATE TABLE `cloud`.`external_bigswitch_bcf_devices` (
   CONSTRAINT `fk_external_bigswitch_bcf_devices__physical_network_id` FOREIGN KEY (`physical_network_id`) REFERENCES `physical_network`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+DROP VIEW IF EXISTS `cloud`.`domain_router_view`;
+CREATE VIEW `domain_router_view` AS
+    select
+        `vm_instance`.`id` AS `id`,
+
+
+
+
+
+
+
+
+
+
+
+        `vm_instance`.`name` AS `name`,
+        `account`.`id` AS `account_id`,
+        `account`.`uuid` AS `account_uuid`,
+        `account`.`account_name` AS `account_name`,
+        `account`.`type` AS `account_type`,
+        `domain`.`id` AS `domain_id`,
+        `domain`.`uuid` AS `domain_uuid`,
+        `domain`.`name` AS `domain_name`,
+        `domain`.`path` AS `domain_path`,
+        `projects`.`id` AS `project_id`,
+        `projects`.`uuid` AS `project_uuid`,
+        `projects`.`name` AS `project_name`,
+        `vm_instance`.`uuid` AS `uuid`,
+        `vm_instance`.`created` AS `created`,
+        `vm_instance`.`state` AS `state`,
+        `vm_instance`.`removed` AS `removed`,
+        `vm_instance`.`pod_id` AS `pod_id`,
+        `vm_instance`.`instance_name` AS `instance_name`,
+        `host_pod_ref`.`uuid` AS `pod_uuid`,
+        `data_center`.`id` AS `data_center_id`,
+        `data_center`.`uuid` AS `data_center_uuid`,
+        `data_center`.`name` AS `data_center_name`,
+        `data_center`.`networktype` AS `data_center_type`,
+        `data_center`.`dns1` AS `dns1`,
+        `data_center`.`dns2` AS `dns2`,
+        `data_center`.`ip6_dns1` AS `ip6_dns1`,
+        `data_center`.`ip6_dns2` AS `ip6_dns2`,
+        `host`.`id` AS `host_id`,
+        `host`.`uuid` AS `host_uuid`,
+        `host`.`name` AS `host_name`,
+        `host`.`hypervisor_type` AS `hypervisor_type`,
+        `host`.`cluster_id` AS `cluster_id`,
+        `vm_template`.`id` AS `template_id`,
+        `vm_template`.`uuid` AS `template_uuid`,
+        `service_offering`.`id` AS `service_offering_id`,
+        `disk_offering`.`uuid` AS `service_offering_uuid`,
+        `disk_offering`.`name` AS `service_offering_name`,
+        `nics`.`id` AS `nic_id`,
+        `nics`.`uuid` AS `nic_uuid`,
+        `nics`.`network_id` AS `network_id`,
+        `nics`.`ip4_address` AS `ip_address`,
+        `nics`.`ip6_address` AS `ip6_address`,
+        `nics`.`ip6_gateway` AS `ip6_gateway`,
+        `nics`.`ip6_cidr` AS `ip6_cidr`,
+        `nics`.`default_nic` AS `is_default_nic`,
+        `nics`.`gateway` AS `gateway`,
+        `nics`.`netmask` AS `netmask`,
+        `nics`.`mac_address` AS `mac_address`,
+        `nics`.`broadcast_uri` AS `broadcast_uri`,
+        `nics`.`isolation_uri` AS `isolation_uri`,
+        `vpc`.`id` AS `vpc_id`,
+        `vpc`.`uuid` AS `vpc_uuid`,
+        `vpc`.`name` AS `vpc_name`,
+        `networks`.`uuid` AS `network_uuid`,
+        `networks`.`name` AS `network_name`,
+        `networks`.`network_domain` AS `network_domain`,
+        `networks`.`traffic_type` AS `traffic_type`,
+        `networks`.`guest_type` AS `guest_type`,
+        `async_job`.`id` AS `job_id`,
+        `async_job`.`uuid` AS `job_uuid`,
+        `async_job`.`job_status` AS `job_status`,
+        `async_job`.`account_id` AS `job_account_id`,
+        `domain_router`.`template_version` AS `template_version`,
+        `domain_router`.`scripts_version` AS `scripts_version`,
+        `domain_router`.`is_redundant_router` AS `is_redundant_router`,
+        `domain_router`.`redundant_state` AS `redundant_state`,
+        `domain_router`.`stop_pending` AS `stop_pending`,
+        `domain_router`.`role` AS `role`
+    from
+        ((((((((((((((`domain_router`
+        join `vm_instance` ON ((`vm_instance`.`id` = `domain_router`.`id`)))
+        join `account` ON ((`vm_instance`.`account_id` = `account`.`id`)))
+        join `domain` ON ((`vm_instance`.`domain_id` = `domain`.`id`)))
+        left join `host_pod_ref` ON ((`vm_instance`.`pod_id` = `host_pod_ref`.`id`)))
+        left join `projects` ON ((`projects`.`project_account_id` = `account`.`id`)))
+        left join `data_center` ON ((`vm_instance`.`data_center_id` = `data_center`.`id`)))
+        left join `host` ON ((`vm_instance`.`host_id` = `host`.`id`)))
+        left join `vm_template` ON ((`vm_instance`.`vm_template_id` = `vm_template`.`id`)))
+        left join `service_offering` ON ((`vm_instance`.`service_offering_id` = `service_offering`.`id`)))
+        left join `disk_offering` ON ((`vm_instance`.`service_offering_id` = `disk_offering`.`id`)))
+        left join `nics` ON (((`vm_instance`.`id` = `nics`.`instance_id`)
+            and isnull(`nics`.`removed`))))
+        left join `networks` ON ((`nics`.`network_id` = `networks`.`id`)))
+        left join `vpc` ON (((`domain_router`.`vpc_id` = `vpc`.`id`)
+            and isnull(`vpc`.`removed`))))
+        left join `async_job` ON (((`async_job`.`instance_id` = `vm_instance`.`id`)
+            and (`async_job`.`instance_type` = 'DomainRouter')
+            and (`async_job`.`job_status` = 0))))

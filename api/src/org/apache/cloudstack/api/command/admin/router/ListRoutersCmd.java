@@ -116,7 +116,9 @@ public class ListRoutersCmd extends BaseListProjectAndAccountResourcesCmd {
         return networkId;
     }
 
-    public Long getVpcId() { return vpcId; }
+    public Long getVpcId() {
+        return vpcId;
+    }
 
     public Boolean getForVpc() {
         return forVpc;
