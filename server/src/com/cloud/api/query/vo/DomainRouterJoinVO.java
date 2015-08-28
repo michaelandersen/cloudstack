@@ -152,6 +152,9 @@ public class DomainRouterJoinVO extends BaseViewVO implements ControlledViewEnti
     @Column(name = "vpc_uuid")
     private String vpcUuid;
 
+    @Column(name = "vpc_name")
+    private String vpcName;
+
     @Column(name = "nic_id")
     private long nicId;
 
@@ -371,6 +374,10 @@ public class DomainRouterJoinVO extends BaseViewVO implements ControlledViewEnti
         return vpcId;
     }
 
+    public String getVpcUuid() { return vpcUuid; }
+
+    public String getVpcName() { return vpcName; }
+
     public long getNicId() {
         return nicId;
     }
@@ -435,10 +442,6 @@ public class DomainRouterJoinVO extends BaseViewVO implements ControlledViewEnti
     @Override
     public String getProjectName() {
         return projectName;
-    }
-
-    public String getVpcUuid() {
-        return vpcUuid;
     }
 
     public String getNicUuid() {
