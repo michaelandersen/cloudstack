@@ -10038,6 +10038,9 @@
                                             redundantRouterState: {
                                                 label: 'label.redundant.state'
                                             },
+                                            vpcname: {
+                                                label: 'label.vpc'
+                                            },
                                             vpcid: {
                                                 label: 'label.vpc.id'
                                             }
