@@ -379,11 +379,11 @@ public class RemoteAccessVpnManagerImpl extends ManagerBase implements RemoteAcc
     public VpnUser addVpnUser(final long vpnOwnerId, final String username, final String password) {
         final Account caller = CallContext.current().getCallingAccount();
 
-        if (!username.matches("^[a-zA-Z0-9][a-zA-Z0-9@._-]{2,63}$")) {
+        if (!username.matches("^[a-zA-Z0-9][a-zA-Z0-9@._-]{3,64}$")) {
             throw new InvalidParameterValueException("Username has to be begin with an alphabet have 3-64 characters including alphabets, numbers and the set '@.-_'");
         }
-        if (!password.matches("^[a-zA-Z0-9][a-zA-Z0-9@#+=._-]{2,31}$")) {
-            throw new InvalidParameterValueException("Password has to be 3-32 characters including alphabets, numbers and the set '@#+=.-_'");
+        if (!password.matches("^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^&+=.-_])(?=\\S+$).{8,32}$")) {
+            throw new InvalidParameterValueException("Password must be a minimum length of 8 characters (max 32) and must include at least one letter, a digit, and a special character: '!@#$%^&+=.-_'");
         }
 
         return Transaction.execute(new TransactionCallback<VpnUser>() {
