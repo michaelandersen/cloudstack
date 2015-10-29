@@ -270,19 +270,17 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
     @attr(tags=["advanced"], required_hardware="false")
     def test_vpc_remote_access_vpn(self):
         """Test Remote Access VPN in VPC"""
+        # Steps:
         #1 Create a VPC
         #2 Create a Network
         #3 Create a VM
-        #4 Enable VPN RemoteAccess for VPC
+        #4 Enable VPN Remote access for VPC
         #5 Create a VPN User
-
         #6 Create a client VPC
         #7 Create a client Network
         #8 Create a client VM
-
         #9 Setup VPN Connection
-        #10 Test Connectivity
-
+        #10 Verify Connectivity via a ping test to vm
         #6 Disable RemoteAccess VPN
 
         # 0) Get the default network offering for VPC
