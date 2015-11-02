@@ -383,7 +383,7 @@ public class RemoteAccessVpnManagerImpl extends ManagerBase implements RemoteAcc
             throw new InvalidParameterValueException("Username has to be begin with an alphabet have 3-64 characters including alphabets, numbers and the set '@.-_'");
         }
         if (!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&+=.-_])(?=\\S+$).{8,32}$")) {
-            throw new InvalidParameterValueException("Password must be a minimum length of 8 characters (max 32), must include at least one letter, a digit, and a special character: '!@#$%^&+=.-_'");
+            throw new InvalidParameterValueException("Password must be a minimum length of 8 characters (max 32) and must include at least one letter, a digit, and a special character: '!@#$%^&+=.-_'");
         }
 
         return Transaction.execute(new TransactionCallback<VpnUser>() {
