@@ -205,7 +205,7 @@ class Services:
                 "displayname": "Test VM",
                 "username": "root",
                 "password": "password",
-                "ssh_port": 22,
+                "ssh_port": "22",
                 "privateport": 22,
                 "publicport": 22,
                 "protocol": 'TCP',
@@ -217,7 +217,7 @@ class Services:
                     "format": "qcow2",
                     "hypervisor": "kvm",
                     "ostype": "Other PV (64-bit)",
-                    "url": "http://dl.openvm.eu/cloudstack/debian/vanilla/debian-8.2.0-openstack-amd64-kvm.qcow2.bz2",
+                    "url": "http://dl.openvm.eu/cloudstack/macchinina/x86_64/macchinina-kvm.qcow2.bz2",
                     "requireshvm": "True",
                 },
                 "xen": {
@@ -267,6 +267,25 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
         cls.services["virtual_machine"]["hypervisor"] = cls.services["default_hypervisor"]
         cls.cleanup = [cls.account]
 
+    def get_ssh_client(self, vm, ssh_port, retries):
+        """ Setup ssh client connection and return connection
+        vm requires attributes public_ip, public_port, username, password """
+        try:
+            ssh_client = SshClient(
+                vm.public_ip.ipaddress.ipaddress,
+                ssh_port,
+                vm.username,
+                vm.password,
+                retries
+            )
+        except Exception as e:
+            self.fail("Unable to create ssh connection: " % e)
+
+        self.assertIsNotNone(
+            ssh_client, "Failed to setup ssh connection to vm=%s on public_ip=%s" % (vm.name, vm.public_ip))
+        return ssh_client
+
+
     @attr(tags=["advanced"], required_hardware="false")
     def test_vpc_remote_access_vpn(self):
         """Test Remote Access VPN in VPC"""
@@ -287,6 +306,8 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
         self.logger.debug("Retrieving default VPC offering")
         networkOffering = NetworkOffering.list(self.apiclient, name="DefaultIsolatedNetworkOfferingForVpcNetworks")
         self.assert_(networkOffering is not None and len(networkOffering) > 0, "No VPC based network offering")
+
+        default_acl = NetworkACLList.list(self.apiclient, name="default_allow")[0]
 
         # 1) Create VPC
         vpcOffering = VpcOffering.list(self.apiclient,isdefault=True)
@@ -317,7 +338,8 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
                 domainid=self.domain.id,
                 networkofferingid=networkOffering[0].id,
                 zoneid=self.zone.id,
-                vpcid=vpc.id
+                vpcid=vpc.id,
+                aclid=default_acl.id
             )
         except Exception as e:
             self.fail(e)
@@ -415,7 +437,8 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
                 domainid=self.domain.id,
                 networkofferingid=networkOffering[0].id,
                 zoneid=self.zone.id,
-                vpcid=client_vpc.id
+                vpcid=client_vpc.id,
+                aclid=default_acl.id
             )
         except Exception as e:
             self.fail(e)
@@ -465,7 +488,7 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
             natrule = NATRule.create(self.apiclient,
                                      client_vm,
                                      services,
-                                     ipaddressid=client_vm.public_ip,
+                                     ipaddressid=client_vm.public_ip.ipaddress.id,
                                      networkid=client_ntwk.id,
                                      vpcid=client_vpc.id
                                     )
@@ -473,6 +496,18 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
             self.fail(e)
         finally:
             self.logger.debug("Created Natrule to client vm: %s" %client_vm.name)
+
+        time.sleep(10)
+
+        start_vpn_command = "uname -a"
+        test_connection_command = "uptime"
+
+        ssh_client = self.get_ssh_client(client_vm, 22, 10)
+
+        start_vpn_response = ssh_client.execute(start_vpn_command)
+        print start_vpn_response
+        test_connection_response = ssh_client.execute(test_connection_command)
+        print test_connection_response
 
 
         #TODO: Add an actual remote vpn connection test from a remote vpc
