@@ -152,6 +152,7 @@ public class UsageEventDaoImpl extends GenericDaoBase<UsageEventVO, Long> implem
             throw new CloudRuntimeException(ex.getMessage());
         }
 
+        txn.close();
         return findRecentEvents(endDate);
     }
 

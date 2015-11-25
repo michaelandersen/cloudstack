@@ -713,7 +713,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
 
                 // commit the helper records, then start a new transaction
                 usageTxn.commit();
-                usageTxn.start();
+
 
                 boolean parsed = false;
                 numAcctsProcessed = 0;
@@ -735,13 +735,18 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
                     Long offset = Long.valueOf(0);
                     Long limit = Long.valueOf(500);
 
+                    // parse usage records from the helper tables on a per account basis within the given time range
                     do {
                         Filter filter = new Filter(AccountVO.class, "id", true, offset, limit);
                         accounts = _accountDao.listAll(filter);
                         if ((accounts != null) && !accounts.isEmpty()) {
                             for (AccountVO account : accounts) {
+
+                                usageTxn.start();
                                 parsed = parseHelperTables(account, currentStartDate, currentEndDate);
                                 numAcctsProcessed++;
+                                usageTxn.commit();
+
                             }
                         }
                         offset = new Long(offset.longValue() + limit.longValue());
@@ -755,6 +760,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
                     // reset offset
                     offset = Long.valueOf(0);
 
+                    // find deleted accounts and mark attached templates as deleted in usage database
                     do {
                         Filter filter = new Filter(AccountVO.class, "id", true, offset, limit);
 
@@ -762,7 +768,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
 
                         if ((accounts != null) && !accounts.isEmpty()) {
                             for (AccountVO account : accounts) {
-                                parsed = parseHelperTables(account, currentStartDate, currentEndDate);
+
                                 List<Long> publicTemplates = _usageDao.listPublicTemplatesByAccount(account.getId());
                                 for (Long templateId : publicTemplates) {
                                     //mark public templates owned by deleted accounts as deleted
@@ -771,6 +777,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
                                         s_logger.warn("More that one usage entry for storage: " + templateId + " assigned to account: " + account.getId() +
                                             "; marking them all as deleted...");
                                     }
+
                                     for (UsageStorageVO storageVO : storageVOs) {
                                         if (s_logger.isDebugEnabled()) {
                                             s_logger.debug("deleting template: " + storageVO.getId() + " from account: " + storageVO.getAccountId());
@@ -805,6 +812,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
             } catch (Exception ex) {
                 s_logger.error("Exception in usage manager", ex);
                 usageTxn.rollback();
+
             } finally {
                 // everything seemed to work...set endDate as the last success date
                 _usageJobDao.updateJobSuccess(job.getId(), startDateMillis, endDateMillis, System.currentTimeMillis() - timeStart, success);
@@ -813,7 +821,7 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
                 if (job.getJobType() == UsageJobVO.JOB_TYPE_RECURRING) {
                     _usageJobDao.createNewJob(_hostname, _pid, UsageJobVO.JOB_TYPE_RECURRING);
                 }
-                usageTxn.commit();
+
                 usageTxn.close();
 
                 // switch back to CLOUD_DB
