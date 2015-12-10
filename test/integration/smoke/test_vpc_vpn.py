@@ -224,15 +224,35 @@ class Services:
                     "requireshvm": "True",
                 },
 
-                "xen": {
+                "xenserver": {
                     "name": "tiny-xen",
                     "displaytext": "macchinina xen",
                     "format": "vhd",
                     "hypervisor": "xen",
-                    "ostype": "Other (64-bit)",
+                    "ostype": "Other PV (64-bit)",
                     "url": "http://dl.openvm.eu/cloudstack/macchinina/x86_64/macchinina-xen.vhd.bz2",
                     "requireshvm": "True",
                 },
+
+                "hyperv": {
+                    "name": "tiny-hyperv",
+                    "displaytext": "macchinina xen",
+                    "format": "vhd",
+                    "hypervisor": "hyperv",
+                    "ostype": "Other PV (64-bit)",
+                    "url": "http://dl.openvm.eu/cloudstack/macchinina/x86_64/macchinina-hyperv.vhd.zip",
+                    "requireshvm": "True",
+                },
+
+                "vmware": {
+                    "name": "tiny-vmware",
+                    "displaytext": "macchinina vmware",
+                    "format": "ova",
+                    "hypervisor": "vmware",
+                    "ostype": "Other PV (64-bit)",
+                    "url": "http://dl.openvm.eu/cloudstack/macchinina/x86_64/macchinina-vmware.vmdk.bz2",
+                    "requireshvm": "True",
+                }
             }
         }
 
@@ -260,20 +280,21 @@ class TestVpcRemoteAccessVpn(cloudstackTestCase):
         cls.account = Account.create(
             cls.apiclient, services=cls.services["account"])
 
-        cls.hypervisor = cls.services["default_hypervisor"]
-        cls.logger.debug("Downloading Template: %s from: %s" % (cls.services["template"][
-                         cls.hypervisor]["name"], cls.services["template"][cls.hypervisor]["url"]))
-        cls.template = Template.register(cls.apiclient, cls.services["template"][
-                                         cls.hypervisor], cls.zone.id, hypervisor=cls.hypervisor, account=cls.account.name, domainid=cls.domain.id)
+        cls.hypervisor = testClient.getHypervisorInfo()
+
+        cls.logger.debug("Downloading Template: %s from: %s" %(cls.services["template"][cls.hypervisor.lower()], cls.services["template"][cls.hypervisor.lower()]["url"]))
+        cls.template = Template.register(cls.apiclient, cls.services["template"][cls.hypervisor.lower()], cls.zone.id, hypervisor=cls.hypervisor.lower(), account=cls.account.name, domainid=cls.domain.id)
         cls.template.download(cls.apiclient)
 
         if cls.template == FAILED:
-            assert False, "get_template() failed to return template with description %s" % cls.services[
-                "compute_offering"]
+            assert False, "get_template() failed to return template"
 
-        cls.services["virtual_machine"][
-            "hypervisor"] = cls.services["default_hypervisor"]
-        cls.cleanup = [cls.account]
+        cls.logger.debug("Successfully created account: %s, id: \
+                   %s" % (cls.account.name,
+                          cls.account.id))
+
+        cls.cleanup = [cls.template, cls.account, cls.compute_offering]
+        return
 
     @attr(tags=["advanced"], required_hardware="true")
     def test_vpc_remote_access_vpn(self):
