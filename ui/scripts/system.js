@@ -410,6 +410,50 @@
                                 dataFns.capacity();
                     },
 
+                    loadbalancerCount: function (data) {
+                        var data2 = {
+                            listAll: true,
+                            page: 1,
+                            pagesize: 1 //specifying pagesize as 1 because we don't need any embedded objects to be returned here. The only thing we need from API response is "count" property.
+                        };
+                        $.ajax({
+                            url: createURL('listLoadBalancers'),
+                            data: data2,
+                            success: function (json) {
+                                var total1 = json.listloadbalancersresponse.count ? json.listloadbalancersresponse.count: 0;
+                                var total2 = 0; //reset
+
+                                /*
+                                 * In project view, the first listRotuers API(without projectid=-1) will return the same objects as the second listRouters API(with projectid=-1),
+                                 * because in project view, all API calls are appended with projectid=[projectID].
+                                 * Therefore, we only call the second listRouters API(with projectid=-1) in non-project view.
+                                 */
+                                if (cloudStack.context && cloudStack.context.projects == null) { //non-project view
+                                var data3 = {
+                                    listAll: true,
+                                        projectid: -1,
+                                    page: 1,
+                                    pagesize: 1 //specifying pagesize as 1 because we don't need any embedded objects to be returned here. The only thing we need from API response is "count" property.
+                                };
+                                $.ajax({
+                                    url: createURL('listLoadBalancers'),
+                                    data: data3,
+                                        async: false,
+                                    success: function (json) {
+                                            total2 = json.listloadbalancersresponse.count ? json.listloadbalancersresponse.count: 0;
+                                        }
+                                    });
+                                }
+
+                                        args.response.success({
+                                            data: {
+                                                loadbalancerCount: (total1 + total2)
+                                            }
+                                        });
+                                    }
+                                });
+                                dataFns.capacity();
+                    },
                     capacity: function (data) {
                         $.ajax({
                             url: createURL('listCapacity'),
@@ -452,26 +496,8 @@
                             }
                         });
 
-                       dataFns.loadbalancerCount();
+                       dataFns.socketInfo();
                     },
-
-                    $.ajax({
-                        url: createURL('listLoadBalancers'),
-                        data: {
-                            listAll: true,
-                            page: 1,
-                            pagesize: 1 //specifying pagesize as 1 because we don't need any embedded objects to be returned here. The only thing we need from API response is "count" property.
-                        },
-                        success: function (json) {
-                            args.response.success({
-                                data: {
-                                    loadbalancerCount: json.listloadbalancersresponse.count ? json.listloadbalancersresponse.count: 0
-                                }
-                            });
-                        }
-                    });
-                    dataFns.socketInfo();
-                  },
 
                     socketInfo: function (data) {
                         var socketCount = 0;
