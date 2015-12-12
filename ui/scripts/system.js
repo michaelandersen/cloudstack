@@ -452,8 +452,26 @@
                             }
                         });
 
-                       dataFns.socketInfo();
+                       dataFns.loadbalancerCount();
                     },
+
+                    $.ajax({
+                        url: createURL('listLoadBalancers'),
+                        data: {
+                            listAll: true,
+                            page: 1,
+                            pagesize: 1 //specifying pagesize as 1 because we don't need any embedded objects to be returned here. The only thing we need from API response is "count" property.
+                        },
+                        success: function (json) {
+                            args.response.success({
+                                data: {
+                                    loadbalancerCount: json.listloadbalancersresponse.count ? json.listloadbalancersresponse.count: 0
+                                }
+                            });
+                        }
+                    });
+                    dataFns.socketInfo();
+                  },
 
                     socketInfo: function (data) {
                         var socketCount = 0;
@@ -504,7 +522,9 @@
 
                             return deferred;
 
-                        }
+                        },
+
+
 
                         $.ajax({
                             url: createURL('listConfigurations'),

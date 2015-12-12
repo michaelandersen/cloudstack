@@ -1230,14 +1230,6 @@
                                   view-all-title="<fmt:message key="label.virtual.routers"/>"
                                   view-all-target="virtualRouters"><fmt:message key="label.view.all"/></span>
                         </li>
-                        <li class="block sockets">
-                            <span class="header"><fmt:message key="label.sockets"/></span>
-                            <span class="icon">&nbsp;</span>
-                            <span class="overview total" data-item="socketCount"></span>
-                            <span class="button view-all sockets"
-                                  view-all-title="<fmt:message key="label.sockets"/>"
-                                  view-all-target="sockets"><fmt:message key="label.view.all"/></span>
-                        </li>
                         <li class="block loadbalancers">
                             <span class="header"><fmt:message key="label.loadbalancers"/></span>
                             <span class="icon">&nbsp;</span>
@@ -1246,6 +1238,15 @@
                                   view-all-title="<fmt:message key="label.loadbalancers"/>"
                                   view-all-target="loadbalancers"><fmt:message key="label.view.all"/></span>
                         </li>
+                        <li class="block sockets">
+                            <span class="header"><fmt:message key="label.sockets"/></span>
+                            <span class="icon">&nbsp;</span>
+                            <span class="overview total" data-item="socketCount"></span>
+                            <span class="button view-all sockets"
+                                  view-all-title="<fmt:message key="label.sockets"/>"
+                                  view-all-target="sockets"><fmt:message key="label.view.all"/></span>
+                        </li>
+
                     </ul>
                 </div>
             </div>
