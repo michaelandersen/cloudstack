@@ -1741,6 +1741,13 @@ public class VpcManagerImpl extends ManagerBase implements VpcManager, VpcProvis
     }
 
     @Override
+    @ActionEvent(eventType = EventTypes.EVENT_VPC_PEERING_REQUEST_CREATE, eventDescription = "Creating VPC Peering Request")
+    public boolean createVpcPeeringConnectionRequest() {
+        s_logger.debug("In VPC Manager Implementation: Creating VPC Peering Connection Request");
+        return true;
+    }
+
+    @Override
     @ActionEvent(eventType = EventTypes.EVENT_PRIVATE_GATEWAY_DELETE, eventDescription = "deleting private gateway")
     @DB
     public boolean deleteVpcPrivateGateway(final long gatewayId) throws ConcurrentOperationException, ResourceUnavailableException {

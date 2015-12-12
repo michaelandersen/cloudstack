@@ -256,4 +256,5 @@ public interface VpcService {
      */
     public boolean applyStaticRoute(long routeId) throws ResourceUnavailableException;
 
+    public boolean createVpcPeeringConnectionRequest() throws InsufficientCapacityException;
 }

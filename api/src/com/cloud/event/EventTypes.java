@@ -44,11 +44,11 @@ import com.cloud.network.rules.LoadBalancer;
 import com.cloud.network.rules.StaticNat;
 import com.cloud.network.rules.StickinessPolicy;
 import com.cloud.network.security.SecurityGroup;
+import com.cloud.network.vpc.Vpc;
+import com.cloud.network.vpc.PrivateGateway;
 import com.cloud.network.vpc.NetworkACL;
 import com.cloud.network.vpc.NetworkACLItem;
-import com.cloud.network.vpc.PrivateGateway;
 import com.cloud.network.vpc.StaticRoute;
-import com.cloud.network.vpc.Vpc;
 import com.cloud.offering.DiskOffering;
 import com.cloud.offering.NetworkOffering;
 import com.cloud.offering.ServiceOffering;
@@ -403,6 +403,17 @@ public class EventTypes {
     public static final String EVENT_VPC_OFFERING_CREATE = "VPC.OFFERING.CREATE";
     public static final String EVENT_VPC_OFFERING_UPDATE = "VPC.OFFERING.UPDATE";
     public static final String EVENT_VPC_OFFERING_DELETE = "VPC.OFFERING.DELETE";
+
+    // VPC Peering Connection Request
+    public static final String EVENT_VPC_PEERING_REQUEST_CREATE = "VPC.PEERING.REQUEST.CREATE";
+    public static final String EVENT_VPC_PEERING_REQUEST_ACCEPT = "VPC.PEERING.REQUEST.ACCEPT";
+    public static final String EVENT_VPC_PEERING_REQUEST_REJECT = "VPC.PEERING.REQUEST.REJECT";
+    public static final String EVENT_VPC_PEERING_REQUEST_DELETE = "VPC.PEERING.REQUEST.DELETE";
+    public static final String EVENT_VPC_PEERING_REQUEST_EXPIRE = "VPC.PEERING.REQUEST.EXPIRE";
+
+    // VPC Peering Connection
+    public static final String EVENT_VPC_PEERING_CONNECTION_CREATE = "VPC.PEERING.CONNECTION.CREATE";
+    public static final String EVENT_VPC_PEERING_CONNECTION_DELETE = "VPC.PEERING.CONNECTION.DELETE";
 
     // Private gateway
     public static final String EVENT_PRIVATE_GATEWAY_CREATE = "PRIVATE.GATEWAY.CREATE";
@@ -825,6 +836,16 @@ public class EventTypes {
         entityEventDetails.put(EVENT_VPC_OFFERING_CREATE, Vpc.class);
         entityEventDetails.put(EVENT_VPC_OFFERING_UPDATE, Vpc.class);
         entityEventDetails.put(EVENT_VPC_OFFERING_DELETE, Vpc.class);
+
+        // VPC Peering Connection Request
+        entityEventDetails.put(EVENT_VPC_PEERING_REQUEST_CREATE, Vpc.class);
+        entityEventDetails.put(EVENT_VPC_PEERING_REQUEST_ACCEPT, Vpc.class);
+        entityEventDetails.put(EVENT_VPC_PEERING_REQUEST_REJECT, Vpc.class);
+        entityEventDetails.put(EVENT_VPC_PEERING_REQUEST_DELETE, Vpc.class);
+        entityEventDetails.put(EVENT_VPC_PEERING_REQUEST_EXPIRE, Vpc.class);
+
+        entityEventDetails.put(EVENT_VPC_PEERING_CONNECTION_CREATE, Vpc.class);
+        entityEventDetails.put(EVENT_VPC_PEERING_CONNECTION_DELETE, Vpc.class);
 
         // Private gateway
         entityEventDetails.put(EVENT_PRIVATE_GATEWAY_CREATE, PrivateGateway.class);
