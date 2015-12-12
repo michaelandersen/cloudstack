@@ -1238,6 +1238,14 @@
                                   view-all-title="<fmt:message key="label.sockets"/>"
                                   view-all-target="sockets"><fmt:message key="label.view.all"/></span>
                         </li>
+                        <li class="block loadbalancers">
+                            <span class="header"><fmt:message key="label.loadbalancers"/></span>
+                            <span class="icon">&nbsp;</span>
+                            <span class="overview total" data-item="loadbalancerCount"></span>
+                            <span class="button view-all loadbalancer"
+                                  view-all-title="<fmt:message key="label.loadbalancers"/>"
+                                  view-all-target="loadbalancers"><fmt:message key="label.view.all"/></span>
+                        </li>
                     </ul>
                 </div>
             </div>

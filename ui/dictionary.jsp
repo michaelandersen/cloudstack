@@ -760,6 +760,7 @@ dictionary = {
 'label.level': '<fmt:message key="label.level" />',
 'label.linklocal.ip': '<fmt:message key="label.linklocal.ip" />',
 'label.load.balancer': '<fmt:message key="label.load.balancer" />',
+'label.loadbalancers': '<fmt:message key="label.loadbalancers" />',
 'label.load.balancing.policies': '<fmt:message key="label.load.balancing.policies" />',
 'label.loading': '<fmt:message key="label.loading" />',
 'label.local': '<fmt:message key="label.local" />',
