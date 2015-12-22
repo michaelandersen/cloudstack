@@ -501,9 +501,6 @@
                     <include name="resources/**/*"/>
                   </fileset>
                 </copy>
-                <copy todir="${basedir}/target/generated-webapp">
-                  <fileset dir="${basedir}/../ui"/>
-                </copy>
                 <copy overwrite="true" todir="${basedir}/target/generated-webapp/WEB-INF/classes">
                   <fileset dir="${basedir}/tomcatconf">
                     <include name="*.in"/>
