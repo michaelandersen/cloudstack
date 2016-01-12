@@ -53,12 +53,6 @@
         <servlet-class>com.cloud.servlet.ConsoleProxyServlet</servlet-class>
         <load-on-startup>6</load-on-startup>
     </servlet>
-	
-
-    <servlet>
-        <servlet-name>staticResources</servlet-name>
-        <servlet-class>com.cloud.servlet.StaticResourceServlet</servlet-class>
-    </servlet>
  
     <servlet-mapping>
          <servlet-name>apiServlet</servlet-name>
@@ -69,18 +63,5 @@
          <servlet-name>consoleServlet</servlet-name>   
          <url-pattern>/console</url-pattern> 
     </servlet-mapping>
-	
-
-    <servlet-mapping>
-        <servlet-name>staticResources</servlet-name>
-        <url-pattern>*.css</url-pattern>
-        <url-pattern>*.html</url-pattern>
-        <url-pattern>*.js</url-pattern>
-    </servlet-mapping>
-
-    <error-page>
-      <exception-type>java.lang.Exception</exception-type>
-      <location>/error.jsp</location>
-    </error-page>
 
 </web-app>
